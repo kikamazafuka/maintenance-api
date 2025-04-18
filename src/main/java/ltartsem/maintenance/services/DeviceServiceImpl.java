@@ -1,7 +1,7 @@
 package ltartsem.maintenance.services;
 
-import ltartsem.maintenance.dto.DeviceRequest;
-import ltartsem.maintenance.dto.DeviceResponse;
+import ltartsem.maintenance.dto.DeviceRequestDto;
+import ltartsem.maintenance.dto.DeviceResponseDto;
 import ltartsem.maintenance.exceptions.DeviceNotFoundException;
 import ltartsem.maintenance.mapper.DeviceMapper;
 import ltartsem.maintenance.models.Device;
@@ -28,27 +28,27 @@ public class DeviceServiceImpl implements DeviceService {
     }
 
     @Override
-    public List<DeviceResponse> getAllDevices() {
+    public List<DeviceResponseDto> getAllDevices() {
         return deviceRepository.findAll().stream()
                 .map(deviceMapper::toResponse)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public Optional<DeviceResponse> getDeviceById(Long id) {
+    public Optional<DeviceResponseDto> getDeviceById(Long id) {
         return deviceRepository.findById(id)
                 .map(deviceMapper::toResponse);
     }
 
     @Override
-    public DeviceResponse createDevice(DeviceRequest deviceRequest) {
+    public DeviceResponseDto createDevice(DeviceRequestDto deviceRequest) {
         Device device = deviceMapper.toEntity(deviceRequest);
         Device savedDevice = deviceRepository.save(device);
         return deviceMapper.toResponse(savedDevice);
     }
 
     @Override
-    public Optional<DeviceResponse> updateDevice(Long id, DeviceRequest deviceRequest) {
+    public Optional<DeviceResponseDto> updateDevice(Long id, DeviceRequestDto deviceRequest) {
         return deviceRepository.findById(id)
                 .map(device -> {
                     deviceMapper.updateEntity(device, deviceRequest);
