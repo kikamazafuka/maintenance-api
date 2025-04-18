@@ -8,8 +8,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import ltartsem.maintenance.dto.DeviceRequest;
-import ltartsem.maintenance.dto.DeviceResponse;
+import ltartsem.maintenance.dto.DeviceRequestDto;
+import ltartsem.maintenance.dto.DeviceResponseDto;
 import ltartsem.maintenance.exceptions.ErrorResponse;
 import ltartsem.maintenance.services.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,21 +33,21 @@ public class DeviceController {
 
     @Operation(summary = "Get all devices", description = "Retrieves a list of all devices")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved all devices",
-            content = @Content(schema = @Schema(implementation = DeviceResponse.class, type = "array")))
+            content = @Content(schema = @Schema(implementation = DeviceResponseDto.class, type = "array")))
     @GetMapping
-    public List<DeviceResponse> getAllDevices() {
+    public List<DeviceResponseDto> getAllDevices() {
         return deviceService.getAllDevices();
     }
 
     @Operation(summary = "Get device by ID", description = "Retrieves a specific device by its ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved the device",
-                    content = @Content(schema = @Schema(implementation = DeviceResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DeviceResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "Device not found",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping("/{id}")
-    public ResponseEntity<DeviceResponse> getDeviceById(
+    public ResponseEntity<DeviceResponseDto> getDeviceById(
             @Parameter(description = "ID of the device to retrieve", example = "1")
             @PathVariable Long id) {
         log.info("Retrieving device by id: {}", id);
@@ -59,32 +59,32 @@ public class DeviceController {
     @Operation(summary = "Create a new device", description = "Creates a new device with the provided details")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully created the device",
-                    content = @Content(schema = @Schema(implementation = DeviceResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DeviceResponseDto.class))),
             @ApiResponse(responseCode = "400", description = "Invalid input",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping
-    public DeviceResponse createDevice(
+    public DeviceResponseDto createDevice(
             @Parameter(description = "Device object to be created")
-            @RequestBody DeviceRequest deviceRequest) {
+            @RequestBody DeviceRequestDto deviceRequest) {
         return deviceService.createDevice(deviceRequest);
     }
 
     @Operation(summary = "Update a device", description = "Updates an existing device with the provided details")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully updated the device",
-                    content = @Content(schema = @Schema(implementation = DeviceResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DeviceResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "Device not found",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "400", description = "Invalid input",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PutMapping("/{id}")
-    public ResponseEntity<DeviceResponse> updateDevice(
+    public ResponseEntity<DeviceResponseDto> updateDevice(
             @Parameter(description = "ID of the device to update", example = "1")
             @PathVariable Long id,
             @Parameter(description = "Updated device object")
-            @RequestBody DeviceRequest deviceRequest) {
+            @RequestBody DeviceRequestDto deviceRequest) {
         return deviceService.updateDevice(id, deviceRequest)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());

@@ -1,7 +1,7 @@
 package ltartsem.maintenance.mapper;
 
-import ltartsem.maintenance.dto.DeviceRequest;
-import ltartsem.maintenance.dto.DeviceResponse;
+import ltartsem.maintenance.dto.DeviceRequestDto;
+import ltartsem.maintenance.dto.DeviceResponseDto;
 import ltartsem.maintenance.models.Device;
 import ltartsem.maintenance.models.SystemType;
 import org.springframework.stereotype.Component;
@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 @Component
 public class DeviceMapper {
 
-    public Device toEntity(DeviceRequest request) {
+    public Device toEntity(DeviceRequestDto request) {
         Device device = new Device();
         device.setName(request.name());
         device.setFirstMaintenanceDurationMinutes(request.firstMaintenanceDurationMinutes());
@@ -19,8 +19,8 @@ public class DeviceMapper {
         return device;
     }
 
-    public DeviceResponse toResponse(Device device) {
-        return new DeviceResponse(
+    public DeviceResponseDto toResponse(Device device) {
+        return new DeviceResponseDto(
             device.getId(),
             device.getName(),
             device.getFirstMaintenanceDurationMinutes(),
@@ -31,7 +31,7 @@ public class DeviceMapper {
         );
     }
 
-    public void updateEntity(Device device, DeviceRequest request) {
+    public void updateEntity(Device device, DeviceRequestDto request) {
         device.setName(request.name());
         device.setFirstMaintenanceDurationMinutes(request.firstMaintenanceDurationMinutes());
         device.setSecondMaintenanceDurationMinutes(request.secondMaintenanceDurationMinutes());

@@ -1,14 +1,14 @@
 package ltartsem.maintenance.services;
 
-import ltartsem.maintenance.dto.DeviceRequest;
-import ltartsem.maintenance.dto.DeviceResponse;
+import ltartsem.maintenance.dto.DeviceRequestDto;
+import ltartsem.maintenance.dto.DeviceResponseDto;
 import java.util.List;
 import java.util.Optional;
 
 public interface DeviceService {
-    List<DeviceResponse> getAllDevices();
-    Optional<DeviceResponse> getDeviceById(Long id);
-    DeviceResponse createDevice(DeviceRequest deviceRequest);
-    Optional<DeviceResponse> updateDevice(Long id, DeviceRequest deviceRequest);
+    List<DeviceResponseDto> getAllDevices();
+    Optional<DeviceResponseDto> getDeviceById(Long id);
+    DeviceResponseDto createDevice(DeviceRequestDto deviceRequest);
+    Optional<DeviceResponseDto> updateDevice(Long id, DeviceRequestDto deviceRequest);
     boolean deleteDevice(Long id);
 } 
