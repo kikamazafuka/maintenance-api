@@ -1,5 +1,6 @@
 package ltartsem.maintenance.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -16,8 +17,8 @@ public class Office {
     private String name;
     private String address;
 
-    @ManyToMany(mappedBy = "offices")
-    private Set<Employee> employees = new HashSet<>();
+    @OneToMany(mappedBy = "office")
+    private Set<EmployeeOffice> employeeOffices = new HashSet<>();
 
     @ManyToMany
     @JoinTable(
@@ -25,6 +26,7 @@ public class Office {
             joinColumns = @JoinColumn(name = "office_id"),
             inverseJoinColumns = @JoinColumn(name = "system_type_id")
     )
+    @JsonBackReference
     private Set<SystemType> systemTypes = new HashSet<>();
 
     @OneToMany(mappedBy = "office")

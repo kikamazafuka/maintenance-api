@@ -5,6 +5,7 @@ import ltartsem.maintenance.dto.EmployeeResponseDto;
 import ltartsem.maintenance.exceptions.EmployeeNotFoundException;
 import ltartsem.maintenance.mapper.EmployeeMapper;
 import ltartsem.maintenance.models.Employee;
+import ltartsem.maintenance.models.EmployeeOffice;
 import ltartsem.maintenance.models.Office;
 import ltartsem.maintenance.repositories.EmployeeRepository;
 import ltartsem.maintenance.repositories.OfficeRepository;
@@ -45,10 +46,15 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    @Transactional
     public Optional<EmployeeResponseDto> getEmployeeById(Long id) {
         log.info("Fetching employee with id: {}", id);
         return employeeRepository.findById(id)
-                .map(employeeMapper::toResponse);
+                .map(employee -> {
+                    // Access employeeOffices to ensure they are loaded
+                    employee.getEmployeeOffices().size();
+                    return employeeMapper.toResponse(employee);
+                });
     }
 
     @Override
@@ -88,11 +94,20 @@ public class EmployeeServiceImpl implements EmployeeService {
         log.info("Updating offices for employee with id: {}", id);
         return employeeRepository.findById(id)
                 .map(employee -> {
-                    Set<Office> offices = officeIds.stream()
-                            .map(officeId -> officeRepository.findById(officeId)
-                                    .orElseThrow(() -> new IllegalArgumentException("Office not found with id: " + officeId)))
+                    Set<EmployeeOffice> employeeOffices = officeIds.stream()
+                            .map(officeId -> {
+                                Office office = officeRepository.findById(officeId)
+                                        .orElseThrow(() -> new IllegalArgumentException("Office not found with id: " + officeId));
+                                EmployeeOffice employeeOffice = new EmployeeOffice();
+                                employeeOffice.setEmployee(employee);
+                                employeeOffice.setOffice(office);
+                                return employeeOffice;
+                            })
                             .collect(Collectors.toSet());
-                    employee.setOffices(offices);
+                    
+                    employee.getEmployeeOffices().clear();
+                    employee.getEmployeeOffices().addAll(employeeOffices);
+                    
                     Employee updatedEmployee = employeeRepository.save(employee);
                     log.info("Offices updated successfully for employee with id: {}", id);
                     return employeeMapper.toResponse(updatedEmployee);

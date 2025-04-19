@@ -2,7 +2,6 @@ package ltartsem.maintenance.mapper;
 
 import ltartsem.maintenance.dto.OfficeRequestDto;
 import ltartsem.maintenance.dto.OfficeResponseDto;
-import ltartsem.maintenance.models.Employee;
 import ltartsem.maintenance.models.Office;
 import ltartsem.maintenance.models.SystemType;
 import org.springframework.stereotype.Component;
@@ -25,8 +24,8 @@ public class OfficeMapper {
     }
 
     public OfficeResponseDto toResponse(Office office) {
-        Set<Long> employeeIds = office.getEmployees().stream()
-                .map(Employee::getId)
+        Set<Long> employeeIds = office.getEmployeeOffices().stream()
+                .map(eo -> eo.getEmployee().getId())
                 .collect(Collectors.toSet());
 
         Set<Long> systemTypeIds = office.getSystemTypes().stream()

@@ -1,5 +1,6 @@
 package ltartsem.maintenance.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -20,13 +21,8 @@ public class Employee {
     private String phoneNumber;
     private String address;
 
-    @ManyToMany
-    @JoinTable(
-            name = "office_employee",
-            joinColumns = @JoinColumn(name = "employee_id"),
-            inverseJoinColumns = @JoinColumn(name = "office_id")
-    )
-    private Set<Office> offices = new HashSet<>();
-
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonManagedReference
+    private Set<EmployeeOffice> employeeOffices = new HashSet<>();
 }
 
