@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @RestController
@@ -59,6 +60,16 @@ public class EmployeeController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @PutMapping("/{id}/offices")
+    public ResponseEntity<EmployeeResponseDto> updateEmployeeOffices(
+            @PathVariable Long id,
+            @RequestBody Set<Long> officeIds) {
+        log.info("Received request to update offices for employee with id: {}", id);
+        return employeeService.updateEmployeeOffices(id, officeIds)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }
 

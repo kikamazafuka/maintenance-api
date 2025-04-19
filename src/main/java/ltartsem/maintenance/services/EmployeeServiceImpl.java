@@ -5,7 +5,9 @@ import ltartsem.maintenance.dto.EmployeeResponseDto;
 import ltartsem.maintenance.exceptions.EmployeeNotFoundException;
 import ltartsem.maintenance.mapper.EmployeeMapper;
 import ltartsem.maintenance.models.Employee;
+import ltartsem.maintenance.models.Office;
 import ltartsem.maintenance.repositories.EmployeeRepository;
+import ltartsem.maintenance.repositories.OfficeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -22,11 +25,15 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeRepository employeeRepository;
     private final EmployeeMapper employeeMapper;
+    private final OfficeRepository officeRepository;
 
     @Autowired
-    public EmployeeServiceImpl(EmployeeRepository employeeRepository, EmployeeMapper employeeMapper) {
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository, 
+                             EmployeeMapper employeeMapper,
+                             OfficeRepository officeRepository) {
         this.employeeRepository = employeeRepository;
         this.employeeMapper = employeeMapper;
+        this.officeRepository = officeRepository;
     }
 
     @Override
@@ -34,7 +41,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         log.info("Fetching all employees");
         return employeeRepository.findAll().stream()
                 .map(employeeMapper::toResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -74,5 +81,21 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeRepository.deleteById(id);
         log.info("Employee with id: {} deleted successfully", id);
         return true;
+    }
+
+    @Override
+    public Optional<EmployeeResponseDto> updateEmployeeOffices(Long id, Set<Long> officeIds) {
+        log.info("Updating offices for employee with id: {}", id);
+        return employeeRepository.findById(id)
+                .map(employee -> {
+                    Set<Office> offices = officeIds.stream()
+                            .map(officeId -> officeRepository.findById(officeId)
+                                    .orElseThrow(() -> new IllegalArgumentException("Office not found with id: " + officeId)))
+                            .collect(Collectors.toSet());
+                    employee.setOffices(offices);
+                    Employee updatedEmployee = employeeRepository.save(employee);
+                    log.info("Offices updated successfully for employee with id: {}", id);
+                    return employeeMapper.toResponse(updatedEmployee);
+                });
     }
 } 
