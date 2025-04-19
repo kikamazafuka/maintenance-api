@@ -79,3 +79,51 @@ deploy:jdk8:
   only:
     variables:
       - $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+stages:
+  - build
+  - test
+  - deploy
+
+# Build stage jobs
+build-job1:
+  stage: build
+  script:
+    - echo "Building the application..."
+    - echo "Build step 1 completed"
+  only:
+    - master
+
+build-job2:
+  stage: build
+  script:
+    - echo "Running additional build tasks..."
+    - echo "Build step 2 completed"
+  only:
+    - master
+
+# Test stage jobs
+unit-test:
+  stage: test
+  script:
+    - echo "Running unit tests..."
+    - echo "Unit tests completed"
+  only:
+    - master
+
+integration-test:
+  stage: test
+  script:
+    - echo "Running integration tests..."
+    - echo "Integration tests completed"
+  only:
+    - master
+
+# Deploy stage job
+deploy-application:
+  stage: deploy
+  script:
+    - echo "Deploying application..."
+    - echo "Application successfully deployed!"
+  only:
+    - master
