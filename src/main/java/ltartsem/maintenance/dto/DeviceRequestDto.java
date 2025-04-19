@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 
 @Schema(description = "Device request data")
-public record DeviceRequest(
+public record DeviceRequestDto(
     @NotBlank(message = "Device name is required")
     @Schema(description = "Name of the device", example = "Printer XYZ-2000")
     String name,

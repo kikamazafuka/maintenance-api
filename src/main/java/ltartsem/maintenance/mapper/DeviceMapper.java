@@ -3,10 +3,7 @@ package ltartsem.maintenance.mapper;
 import ltartsem.maintenance.dto.DeviceRequestDto;
 import ltartsem.maintenance.dto.DeviceResponseDto;
 import ltartsem.maintenance.models.Device;
-import ltartsem.maintenance.models.SystemType;
 import org.springframework.stereotype.Component;
-
-import java.util.stream.Collectors;
 
 @Component
 public class DeviceMapper {
@@ -24,10 +21,7 @@ public class DeviceMapper {
             device.getId(),
             device.getName(),
             device.getFirstMaintenanceDurationMinutes(),
-            device.getSecondMaintenanceDurationMinutes(),
-            device.getSystemTypes().stream()
-                .map(SystemType::getId)
-                .collect(Collectors.toSet())
+            device.getSecondMaintenanceDurationMinutes()
         );
     }
 

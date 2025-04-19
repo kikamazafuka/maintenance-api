@@ -1,59 +1,61 @@
 package ltartsem.maintenance.controllers;
 
-import ltartsem.maintenance.models.Employee;
-import ltartsem.maintenance.repositories.EmployeeRepository;
+import ltartsem.maintenance.dto.EmployeeRequestDto;
+import ltartsem.maintenance.dto.EmployeeResponseDto;
+import ltartsem.maintenance.services.EmployeeService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/employees")
 public class EmployeeController {
 
-    private final EmployeeRepository employeeRepository;
+    private final EmployeeService employeeService;
 
     @Autowired
-    public EmployeeController(EmployeeRepository employeeRepository) {
-        this.employeeRepository = employeeRepository;
+    public EmployeeController(EmployeeService employeeService) {
+        this.employeeService = employeeService;
     }
 
     @GetMapping
-    public List<Employee> getAllEmployees() {
-        return employeeRepository.findAll();
+    public List<EmployeeResponseDto> getAllEmployees() {
+        log.info("Received request to get all employees");
+        return employeeService.getAllEmployees();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Employee> getEmployeeById(@PathVariable Long id) {
-        return employeeRepository.findById(id)
+    public ResponseEntity<EmployeeResponseDto> getEmployeeById(@PathVariable Long id) {
+        log.info("Received request to get employee with id: {}", id);
+        return employeeService.getEmployeeById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Employee createEmployee(@RequestBody Employee employee) {
-        return employeeRepository.save(employee);
+    public EmployeeResponseDto createEmployee(@RequestBody EmployeeRequestDto employeeRequest) {
+        log.info("Received request to create new employee");
+        return employeeService.createEmployee(employeeRequest);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Employee> updateEmployee(@PathVariable Long id, @RequestBody Employee employeeDetails) {
-        return employeeRepository.findById(id)
-                .map(employee -> {
-                    employee.setName(employeeDetails.getName());
-                    employee.setSurname(employeeDetails.getSurname());
-                    employee.setBirthDate(employeeDetails.getBirthDate());
-                    employee.setPhoneNumber(employeeDetails.getPhoneNumber());
-                    employee.setAddress(employeeDetails.getAddress());
-                    return ResponseEntity.ok(employeeRepository.save(employee));
-                })
+    public ResponseEntity<EmployeeResponseDto> updateEmployee(
+            @PathVariable Long id,
+            @RequestBody EmployeeRequestDto employeeRequest) {
+        log.info("Received request to update employee with id: {}", id);
+        return employeeService.updateEmployee(id, employeeRequest)
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEmployee(@PathVariable Long id) {
-        if (employeeRepository.existsById(id)) {
-            employeeRepository.deleteById(id);
+        log.info("Received request to delete employee with id: {}", id);
+        if (employeeService.deleteEmployee(id)) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();

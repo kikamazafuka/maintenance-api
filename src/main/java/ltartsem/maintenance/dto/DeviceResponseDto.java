@@ -2,10 +2,8 @@ package ltartsem.maintenance.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import java.util.Set;
-
 @Schema(description = "Device response data")
-public record DeviceResponse(
+public record DeviceResponseDto(
     @Schema(description = "Unique identifier of the device", example = "1")
     Long id,
 
@@ -16,8 +14,6 @@ public record DeviceResponse(
     Long firstMaintenanceDurationMinutes,
 
     @Schema(description = "Duration of second maintenance in minutes", example = "60")
-    Long secondMaintenanceDurationMinutes,
+    Long secondMaintenanceDurationMinutes
 
-    @Schema(description = "Set of system type IDs this device belongs to")
-    Set<Long> systemTypeIds
 ) {} 
