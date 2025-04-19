@@ -13,5 +13,5 @@ public class EmployeeResponseDto {
     private LocalDate birthDate;
     private String phoneNumber;
     private String address;
-    private Set<Long> officeIds;
+    private Set<EmployeeOfficeDto> offices;
 } 

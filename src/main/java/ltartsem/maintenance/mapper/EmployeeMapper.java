@@ -2,6 +2,7 @@ package ltartsem.maintenance.mapper;
 
 import ltartsem.maintenance.dto.EmployeeRequestDto;
 import ltartsem.maintenance.dto.EmployeeResponseDto;
+import ltartsem.maintenance.dto.EmployeeOfficeDto;
 import ltartsem.maintenance.models.Employee;
 import ltartsem.maintenance.models.Office;
 import org.springframework.stereotype.Component;
@@ -36,11 +37,19 @@ public class EmployeeMapper {
         dto.setPhoneNumber(employee.getPhoneNumber());
         dto.setAddress(employee.getAddress());
         
-        Set<Long> officeIds = employee.getOffices().stream()
-                .map(Office::getId)
+        Set<EmployeeOfficeDto> offices = employee.getEmployeeOffices().stream()
+                .map(eo -> toEmployeeOfficeDto(eo.getOffice()))
                 .collect(Collectors.toSet());
-        dto.setOfficeIds(officeIds);
+        dto.setOffices(offices);
         
+        return dto;
+    }
+
+    private EmployeeOfficeDto toEmployeeOfficeDto(Office office) {
+        EmployeeOfficeDto dto = new EmployeeOfficeDto();
+        dto.setId(office.getId());
+        dto.setName(office.getName());
+        dto.setAddress(office.getAddress());
         return dto;
     }
 } 
