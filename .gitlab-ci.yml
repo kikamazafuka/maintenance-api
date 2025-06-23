@@ -3,19 +3,17 @@ stages:
   - test
   - deploy
 
+variables:
+    MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+
+# Cache dependencies between runs
+cache:
+  paths:
+    - .m2/repository/
+    - target/
+
 # Build stage jobs
-build-job1:
-  stage: build
-  script:
-    - echo "Building the application..."
-    - echo "Build step 1 completed"
 
-
-build-job2:
-  stage: build
-  script:
-    - echo "Running additional build tasks..."
-    - echo "Build step 2 completed"
 
 
 # Test stage jobs
@@ -23,8 +21,6 @@ unit-test:
   stage: test
   script:
     - echo "Running unit tests..."
-    - mvn test
-
 
 integration-test:
   stage: test
@@ -45,3 +41,18 @@ deploy-application:
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
   only:
     - master
+
+
+
+
+test:
+  stage: test
+  image: maven:3.8.6-openjdk-17  # or gradle:8.4.0-jdk17 for Gradle
+  script:
+    - mvn clean test  # or 'gradle test' for Gradle
+  artifacts:
+    when: always
+    paths:
+      - target/surefire-reports/  # For test reports
+    reports:
+      junit: target/surefire-reports/*.xml  # For test visualization
