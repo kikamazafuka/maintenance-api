@@ -1,58 +1,29 @@
 stages:
   - build
   - test
-  - deploy
 
 variables:
-    MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository -Xmx512m"
+  # Prevent Docker from pulling image if already exists
+  DOCKER_PULL_POLICY: "if-not-present"
 
-# Cache dependencies between runs
 cache:
   paths:
     - .m2/repository/
     - target/
 
-# Build stage jobs
-
-
-
-# Test stage jobs
-unit-test:
-  stage: test
-  script:
-    - echo "Running unit tests..."
-
-integration-test:
-  stage: test
-  script:
-    - echo "Running integration tests..."
-    - echo "Integration tests completed"
-
-
-# Deploy stage job
-deploy-application:
+build:
   stage: build
-  image: docker:latest
-  services:
-    - docker:dind
+  image: maven:3.8.6-jdk-17
   script:
-    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME .
-    - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER $CI_REGISTRY --password-stdin
-    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
-  only:
-    - master
-
-
-
+    - mvn compile
 
 test:
   stage: test
-  image: maven:3.8.6-openjdk-17  # or gradle:8.4.0-jdk17 for Gradle
+  image: maven:3.8.6-jdk-17
   script:
-    - mvn clean test  # or 'gradle test' for Gradle
+    - mvn test
   artifacts:
     when: always
-    paths:
-      - target/surefire-reports/  # For test reports
     reports:
-      junit: target/surefire-reports/*.xml  # For test visualization
+      junit: target/surefire-reports/*.xml
