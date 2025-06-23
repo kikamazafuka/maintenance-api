@@ -9,33 +9,29 @@ build-job1:
   script:
     - echo "Building the application..."
     - echo "Build step 1 completed"
-  only:
-    - master
+
 
 build-job2:
   stage: build
   script:
     - echo "Running additional build tasks..."
     - echo "Build step 2 completed"
-  only:
-    - master
+
 
 # Test stage jobs
 unit-test:
   stage: test
   script:
     - echo "Running unit tests..."
-    - echo "Unit tests completed"
-  only:
-    - master
+    - mvn test
+
 
 integration-test:
   stage: test
   script:
     - echo "Running integration tests..."
     - echo "Integration tests completed"
-  only:
-    - master
+
 
 # Deploy stage job
 deploy-application:
