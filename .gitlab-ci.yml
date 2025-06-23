@@ -35,7 +35,7 @@ integration-test:
 
 # Deploy stage job
 deploy-application:
-  stage: deploy
+  stage: build
   image: docker:latest
   services:
     - docker:dind
